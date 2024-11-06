@@ -50,6 +50,29 @@ func queueDeclare(ch *amqp.Channel) amqp.Queue {
 }
 
 
+
+func serveFrames(imgByte []byte, i int) {
+    img, _, err := image.Decode(bytes.NewReader(imgByte))
+    if err != nil {
+        log.Fatalln("Erro ao decodificar imagem:", err)
+    }
+
+    name_file := fmt.Sprintf("images/img_%d.jpeg", i)
+    out, err := os.Create(name_file)
+    if err != nil {
+        log.Println("Erro ao criar arquivo:", err)
+        return
+    }
+    defer out.Close()
+
+    opts := jpeg.Options{Quality: 95} 
+    err = jpeg.Encode(out, img, &opts)
+    if err != nil {
+        log.Println("Erro ao salvar imagem:", err)
+    }
+}
+
+
 func main() {
     broker_uri := "amqp://guest:guest@10.10.2.211:30000/"
     exchange := "is"
@@ -86,8 +109,8 @@ func main() {
                 log.Fatalf("Erro ao desserializar a mensagem: %v", err)
             }
 
-            // Exemplo de uso de toMat
-            imgData := objs.GetData() // Certifique-se de que GetData retorna um []byte válido
+
+            imgData := objs.GetData() 
 
 			img, _, err := image.Decode(bytes.NewReader(imgData))
 
@@ -102,11 +125,11 @@ func main() {
 
 			window.IMShow(mat)
 			if window.WaitKey(1) >= 0 {
-				break // Sai do loop se uma tecla for pressionada
+				break 
 			}
             
         }
     }()
 
-    <-make(chan bool) // Mantém o programa em execução
+    <-make(chan bool) 
 }
