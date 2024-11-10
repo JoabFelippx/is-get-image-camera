@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"fmt"
+
 
 	"opencv_golang/is/utils/vision"
 	"google.golang.org/protobuf/proto"
@@ -9,6 +11,9 @@ import (
 	"gocv.io/x/gocv"
 
 	"image"
+	"image/jpeg"
+
+	"os"
 	"bytes"
 
 	amqp "github.com/rabbitmq/amqp091-go"
